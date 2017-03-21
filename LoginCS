@@ -1,0 +1,78 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.IO;
+using System.Text;
+using System.Security.Cryptography;
+namespace PAYSLIP
+{
+    public partial class Login1 : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(GetConnection());
+
+            con.Open();
+            string strstatus = "";
+            string strQuery = "";
+
+            strQuery = "USERCheck";
+            SqlCommand cmd = new SqlCommand(strQuery, con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserId", txtUserName.Text.ToString());
+            cmd.Parameters.AddWithValue("@password", txtPassword.Text.ToString());
+
+            int usercount = (Int32)cmd.ExecuteScalar();
+            //if(strstatus == "Yes")
+            //{
+            if (usercount >= 1)
+            {
+                Response.Redirect("About.aspx");
+
+                this.Page.ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Login Successfully')", true);
+                lblError.ForeColor = System.Drawing.Color.Green;
+            }
+
+        //}
+
+            else
+            {
+                con.Close();
+                //lblError.Text = "Invalid User Name or word";
+                this.Page.ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Invalid User Name')", true);
+                lblError.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+
+
+           private string GetConnection()
+        {
+            return System.Configuration.ConfigurationManager.ConnectionStrings["GetMYDBcon"].ConnectionString;
+
+    
+        }
+
+        protected void btnforgot_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("ForgotPassword.aspx");
+           
+        }
+
+        protected void btnLogSubmit_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("ForgotPassword.aspx");
+        }
+    }
+}
